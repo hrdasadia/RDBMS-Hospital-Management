@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+
+
+
+<html>
+	<head>
+		<title>Newark Medical Association</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		
+  		
+		<link rel="stylesheet" href="css/5grid/core.css" />
+		<link rel="stylesheet" href="css/5grid/core-desktop.css" />
+		<link rel="stylesheet" href="css/5grid/core-1200px.css" />
+		<link rel="stylesheet" href="css/5grid/core-noscript.css" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/style-desktop.css" />
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
+		<style>
+		    
+		    label, input { display:block; }
+		    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+		    fieldset { padding:0; border:0; margin-top:25px; }
+		   
+		    div#users-contain { width: 350px; margin: 20px 0; }
+		    div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		    div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+		    .ui-dialog .ui-state-error { padding: .3em; }
+		    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+		  </style>
+		
+		
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  		<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+		<script type='text/javascript' src='/NMA/dwr/engine.js'></script>
+  		<script type='text/javascript' src='/NMA/dwr/interface/EmployeeManager.js'></script>
+  		 <script type='text/javascript' src='/NMA/dwr/util.js'></script>
+  		 <script type='text/javascript' src='/NMA/dwr/interface/Employee.js'></script>
+	<script>
+	
+  $(function() {
+    var name = $( "#name" ),
+      gender = $( "#gender" ).val(),
+      type = $( "#type" ).val(),
+      phone = $('#phone'),
+      ssn = $( "#ssn" ),
+      address = $( "#address" ),
+      allFields = $( [] ).add( name ).add( type ).add( phone ).add( ssn ).add( address ),
+      tips = $( ".validateTips" );
+ 
+    function updateTips( t ) {
+      tips
+        .text( t )
+        .addClass( "ui-state-highlight" );
+      setTimeout(function() {
+        tips.removeClass( "ui-state-highlight", 1500 );
+      }, 500 );
+    }
+ 
+    function checkLength( o, n, min, max ) {
+      if ( o.val().length > max || o.val().length < min ) {
+        o.addClass( "ui-state-error" );
+        updateTips( "Length of " + n + " must be between " +
+          min + " and " + max + "." );
+        return false;
+      } else {
+        return true;
+      }
+    }
+ 
+    function checkRegexp( o, regexp, n ) {
+      if ( !( regexp.test( o.val() ) ) ) {
+        o.addClass( "ui-state-error" );
+        updateTips( n );
+        return false;
+      } else {
+        return true;
+      }
+    }
+ 
+    $( "#dialog-form" ).dialog({
+        autoOpen: false,
+        height: 600,
+        width: 400,
+        modal: true,
+        buttons: {
+          "Add Employee": function() {
+            var bValid = true;
+            allFields.removeClass( "ui-state-error" );
+   
+           if ( bValid ) {
+              $( "#users tbody" ).append( "<tr>" +
+                "<td>" + name.val() + "</td>" +
+                "<td>" + phone.val() + "</td>" +
+                "<td>" + ssn.val() + "</td>" +
+                "<td>" + address.val() + "</td>" +
+              "</tr>" );
+              
+              var myEmployee = {
+            		  employeeName : $( "#name" ).val(),
+            		  gender:gender,
+            		  
+            		  employeeType:type,
+            	      phone : $('#phone').val(),
+            	      SSN : $( "#ssn" ).val(),
+            	      address : $( "#address" ).val()
+            		};
+              
+              EmployeeManager.insertEmployee(myEmployee, {
+            	  callback:function(str) { 
+            	    	if(str == "0"){
+            	    		$('#result').html('<font size="5px" color="red">New Employee entry failed. Check logs for errors.</font>');
+            	    	}else{
+            	    		$('#result').html('<font size="5px" color="green">New Employee successfully recorded with ID:'+str+'</font>');
+            	    	}
+            	  }
+            	});
+             
+             
+              
+              $( this ).dialog( "close" );
+            }
+            
+          },
+          Cancel: function() {
+            $( this ).dialog( "close" );
+          }
+        },
+        close: function() {
+          allFields.val( "" ).removeClass( "ui-state-error" );
+        }
+      });
+    
+    
+    
+    $( "#addStaffButton" )
+     
+      .click(function() {
+    	  $("#dialog-form input").val("");
+        $( "#dialog-form" ).dialog( "open" );
+      });
+        
+  });
+  </script>
+	
+	</head>
+	<body class="left-sidebar">
+		<!-- Header -->
+		<div id="header-wrapper">
+		
+			<header id="header">
+				<div class="5grid-layout">
+					<div class="row">
+						<div class="5u" id="logo">
+							<h1><a href="#" class="mobileUI-site-name">Newark Medical Association</a></h1>
+							<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							...where health is the gratest wealth</p>
+						</div>
+						<div class="7u" id="menu">
+							<nav class="mobileUI-site-nav">
+								<ul>
+									<li ><a href="index.html">Home</a></li>
+									<li><a href="patient.html">Patient management</a></li>
+									<li><a href="inpatient.html">In-patient management</a></li>
+									<li class="current_page_item"><a href="medicalstaff.html">Medical staff management</a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</header>
+			
+		</div>
+		<!-- Page Wrapper -->
+		<div id="wrapper" class="5grid-layout">
+
+			<!-- Page Content -->
+			<div id="page" class="row">
+				
+				<!-- Sidebar Area -->
+				<div id="sidebar" class="4u">
+				
+					<!-- Sidebar Section 1 -->
+					<section id="box1">
+						
+						<!-- Two Column Content Area -->
+						<div class="5grid">
+							<div class="row">
+								<div class="6u">
+									<section>
+										<h2>Medical Staff Management</h2>
+										<p><a  class="button" id="addStaffButton"><span>Add new staff member</span></a></p>
+										<p><a  class="button" id="removeStaffButton"><span>Remove staff member</span></a></p>
+										<p><a  class="button" id="viewStaffButton"><span>View staff member per job</span></a></p>
+										<p><a  class="button" id="scheduleJobButton"><span>Schedule Job Shift</span></a></p>
+									</section>
+								</div>
+							</div>
+						</div>
+						<!-- Two Column Content Area Ends Here -->
+					
+					</section>
+	
+					<!-- Sidebar Section 2 -->
+					
+				</div>
+				
+				<!-- Content Area -->
+				<div id="content" class="8u mobileUI-main-content">
+					
+					<!-- Main Content Area -->
+					<section>
+						<h2>Dashboard</h2>
+						<div id="result">
+						
+						<p>
+						Use left panel to :
+							<ul>
+							<li>Add/remove a staff member 
+							<li>View stuff member per job type </li>
+							<li>Schedule job shift</li> 
+							</ul>
+						</p>
+						</div>		
+					</section>
+					
+					<!-- Two Column Area -->					
+					
+				</div>
+
+			</div>
+			<!-- Page Content -->
+
+
+		</div>
+		<!-- Wrapper Ends Here -->
+
+
+	
+		<!-- Copyright -->
+		<div class="5grid-layout" id="copyright">
+			<div class="row">
+				<div class="12u">
+					<p>&copy; Your Site Name | Images: <a href="http://fotogrph.com/">Fotogrph</a> | Design: <a href="http://html5templates.com/">Database Project</a></p>
+				</div>
+			</div>
+		</div>
+	
+	<div id="dialog-form" title="Insert new staff member">
+  <p class="validateTips">All form fields are required.</p>
+ 
+  <form>
+  <fieldset>
+    <label for="name">Name</label>
+    <input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+     
+     <label for="gender">Gender</label>
+     <select name="gender" id="gender" class="select ui-widget-content ui-corner-all">
+     	<option value='male'>male</option>
+     	<option value='female'>female</option>
+     </select>
+     
+     <label for="address">Address</label>
+    <input type="text" name="address" id="address" class="text ui-widget-content ui-corner-all">
+     
+     <label for="type">Employee Type:</label>
+     <select name="type" id="type" class="select ui-widget-content ui-corner-all">
+     	<option value='physician'>Physician</option>
+     	<option value='surgeon'>Surgeon</option>
+     	<option value='nurse'>Nurse</option>
+     	<option value='support'>Support</option>
+     </select>
+     
+     <label for="ssn">SSN</label>
+    <input type="text" name="ssn" id="ssn" class="text ui-widget-content ui-corner-all">
+     
+     <label for="phone">Phone</label>
+    <input type="text" name="phone" id="phone" class="text ui-widget-content ui-corner-all">
+     
+      </fieldset>
+  </form>
+</div>
+		
+</body>
+</html>
